@@ -160,14 +160,13 @@ def _write_results(rows, oracle, cs, N, exact_t, rec_orig_exact, args):
                 f"~{args.target_cos}\n")
         f.write(f"- cell sizes: min {cs.min()}, median {int(np.median(cs))}, "
                 f"max {cs.max()}\n\n")
-        f.write("| nprobe | recall@1 vs original | recall@1 vs exact NN | "
-                "candidates scanned | query time |\n")
-        f.write("|---:|---:|---:|---:|---:|\n")
+        f.write("| nprobe | recall@1 (vs exact NN) | candidates scanned | "
+                "query time |\n")
+        f.write("|---:|---:|---:|---:|\n")
         for nprobe, ro, re, cand, qt in rows:
-            f.write(f"| {nprobe} | {ro:.3f} | {re:.3f} | {cand:,.0f} "
+            f.write(f"| {nprobe} | {re:.3f} | {cand:,.0f} "
                     f"({100*cand/N:.2f}%) | {qt:.2f} ms |\n")
-        f.write(f"| exact | {rec_orig_exact:.3f} | 1.000 | {N:,} (100%) | "
-                f"{exact_t:.1f} ms |\n\n")
+        f.write(f"| exact | 1.000 | {N:,} (100%) | {exact_t:.1f} ms |\n\n")
         f.write("## FAISS oracle (shared centroids)\n\n")
         f.write("| nprobe | from-scratch vs FAISS top-1 agreement |\n|---:|---:|\n")
         for nprobe, ag in oracle:

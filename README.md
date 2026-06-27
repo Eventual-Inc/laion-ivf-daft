@@ -44,6 +44,13 @@ exactly what brute force does.
 At `nprobe=16`, IVF matches exact search's answers (**recall 1.000**) while scanning
 **under 1% of the data**.
 
+![recall and query time vs nprobe](charts/tradeoff.png)
+
+The cells are unbalanced on real data (a few tiny, a few large), as expected when
+density varies across the embedding space:
+
+![cell-size distribution](charts/cell_sizes.png)
+
 ## Architecture
 
 | Layer | Tool |
