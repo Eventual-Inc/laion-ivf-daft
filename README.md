@@ -47,7 +47,8 @@ At `nprobe=16`, IVF matches exact search's answers (**recall 1.000**) while scan
 ![recall and query time vs nprobe](charts/tradeoff.png)
 
 The cells are unbalanced on real data (a few tiny, a few large), as expected when
-density varies across the embedding space:
+density varies across the embedding space. This is the motivation for the
+[adaptive-nprobe idea](#next-steps) below.
 
 ![cell-size distribution](charts/cell_sizes.png)
 
@@ -70,6 +71,16 @@ uv pip install --python .venv/bin/python faiss-cpu numpy daft tqdm matplotlib
 # download LAION-400M embeddings (default 5 files ~5 GB; pass N for more)
 ./download_embeddings.sh 5
 ```
+
+## Next steps
+
+**Adaptive nprobe (candidate budget).** Because cells are unbalanced, a fixed
+`nprobe` scans a wildly varying number of candidates per query. A simpler, more
+predictable knob: rank cells by distance and probe nearest-first until ~0.5% of the
+vectors have been scanned, then stop. This gives uniform work and latency per query
+and adapts to local density, instead of fighting the imbalance at clustering time.
+Our sweep brackets it (0.23% scanned gave recall 0.998, 0.88% gave 1.000), so a
+~0.5% budget should sit near full recall at about half the work of `nprobe=16`.
 
 ## License
 
