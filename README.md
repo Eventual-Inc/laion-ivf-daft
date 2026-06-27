@@ -15,11 +15,11 @@ cells, then only search the few cells near a query.
 
 ## The method (three small pieces)
 
-1. **k-means** — learn `nlist` centroids on a *sample* (a few GB), defining the cells.
+1. **k-means** - learn `nlist` centroids on a *sample* (a few GB), defining the cells.
    The full dataset is never loaded; centroids are summary statistics.
-2. **assign** — stream every vector through, putting it in its nearest cell. Bounded
-   memory, embarrassingly parallel (one shard per node).
-3. **search** — for a query, scan only the `nprobe` nearest cells instead of all data.
+2. **assign** - stream every vector through, putting it in its nearest cell. Bounded
+   memory.
+3. **search** - for a query, scan only the `nprobe` nearest cells instead of all data.
 
 `nprobe` is the speed/quality dial: `nprobe=1` is fast and approximate, `nprobe=nlist`
 is exact brute force.
@@ -44,12 +44,12 @@ At `nprobe=16`, IVF matches exact search's answers (**recall 1.000**) while scan
 
 > **Why isn't "recall vs original" 1.0?** It's capped by the task, not by IVF. Exact
 > brute-force search also scores 0.984: for ~1.6% of queries the noise makes a
-> *different* real LAION image genuinely closer than the original — because LAION
+> *different* real LAION image genuinely closer than the original - because LAION
 > contains many near-duplicates. Measured against exact search's own answer (the true
 > nearest neighbor), IVF reaches a clean **1.000**, confirming it loses nothing.
 
 (Query times are for the from-scratch NumPy loop; FAISS is faster in absolute ms but
-algorithmically identical — the "candidates scanned" column is the real comparison.)
+algorithmically identical - the "candidates scanned" column is the real comparison.)
 
 ## Architecture
 
@@ -59,8 +59,7 @@ algorithmically identical — the "candidates scanned" column is the real compar
 | k-means + nprobe search ("the IVF brain") | **from scratch** (`ivf_scratch.py`) |
 | Correctness oracle | **FAISS** IVF (cross-check only, not a runtime dep) |
 
-This mirrors LAION's own production index (`autofaiss`: `OPQ…,IVF131072_HNSW32,PQ…`)
-— same IVF + PQ skeleton, rebuilt from first principles.
+This mirrors LAION's own production index (`autofaiss`: `OPQ…,IVF131072_HNSW32,PQ…`) - same IVF + PQ skeleton, rebuilt from first principles.
 
 ## Setup
 
