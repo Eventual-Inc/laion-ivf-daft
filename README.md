@@ -27,26 +27,22 @@ is exact brute force.
 ## Result (5M real LAION vectors, 2048 cells, M4 Max)
 
 Queries are real LAION vectors perturbed with Gaussian noise to cosine ≈ 0.95
-(simulating a near-duplicate), then searched for. We report recall against two
-baselines and the cost.
+(simulating a near-duplicate), then searched for. **Recall** below means: how often
+IVF's top result is the *exact nearest neighbor* (NN) - the genuinely closest vector,
+the one a brute-force scan of all 5M would return. So recall 1.000 means IVF found
+exactly what brute force does.
 
-| nprobe | recall@1 vs original | recall@1 vs exact NN | candidates scanned | query time |
-|-------:|--------------------:|--------------------:|-------------------:|-----------:|
-| 1      | 0.886 | 0.900 | 2,855 (0.06%)   | 1.3 ms   |
-| 4      | 0.982 | 0.998 | 11,285 (0.23%)  | 5.0 ms   |
-| **16** | **0.984** | **1.000** | **43,836 (0.88%)** | **20 ms** |
-| 64     | 0.984 | 1.000 | 170,090 (3.4%)  | 78 ms    |
-| 256    | 0.984 | 1.000 | 668,757 (13%)   | 334 ms   |
-| exact  | 0.984 | 1.000 | 5,000,000 (100%)| 92 ms    |
+| nprobe | recall@1 | candidates scanned | query time |
+|-------:|---------:|-------------------:|-----------:|
+| 1      | 0.900 | 2,855 (0.06%)   | 1.3 ms   |
+| 4      | 0.998 | 11,285 (0.23%)  | 5.0 ms   |
+| **16** | **1.000** | **43,836 (0.88%)** | **20 ms** |
+| 64     | 1.000 | 170,090 (3.4%)  | 78 ms    |
+| 256    | 1.000 | 668,757 (13%)   | 334 ms   |
+| exact  | 1.000 | 5,000,000 (100%)| 92 ms    |
 
 At `nprobe=16`, IVF matches exact search's answers (**recall 1.000**) while scanning
 **under 1% of the data**.
-
-> **Why isn't "recall vs original" 1.0?** It's capped by the task, not by IVF. Exact
-> brute-force search also scores 0.984: for ~1.6% of queries the noise makes a
-> *different* real LAION image genuinely closer than the original - because LAION
-> contains many near-duplicates. Measured against exact search's own answer (the true
-> nearest neighbor), IVF reaches a clean **1.000**, confirming it loses nothing.
 
 (Query times are for the from-scratch NumPy loop; FAISS is faster in absolute ms but
 algorithmically identical - the "candidates scanned" column is the real comparison.)
