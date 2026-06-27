@@ -44,9 +44,6 @@ exactly what brute force does.
 At `nprobe=16`, IVF matches exact search's answers (**recall 1.000**) while scanning
 **under 1% of the data**.
 
-(Query times are for the from-scratch NumPy loop; FAISS is faster in absolute ms but
-algorithmically identical - the "candidates scanned" column is the real comparison.)
-
 ## Architecture
 
 | Layer | Tool |
@@ -69,4 +66,4 @@ uv pip install --python .venv/bin/python faiss-cpu numpy daft tqdm matplotlib
 
 ## License
 
-Apache License 2.0 (same as Daft).
+Apache License 2.0.
